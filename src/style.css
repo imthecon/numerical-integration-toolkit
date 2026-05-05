@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+body {
+  margin: 20px 0px;
+  padding: 0;
+
+  font-family: "DM Sans";
+}
+
+#wrapper {
+  display: flex;           /* stack children */
+  flex-direction: column-reverse;
+}
+
+#container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  max-width: 100%;
+  margin-top: 20px;
+}
+
+#container > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 250px;
+  margin-right: 20px;
+}
+
+#controls > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+#faq {
+  text-align: left;
+  padding: 10px 20px;
+}
+
+#faq b {
+  background-color: rgb(10, 10, 10);
+  padding: 5px 10px;
+  color: white;
+  border-radius: 10px;
+}
