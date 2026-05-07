@@ -1,32 +1,432 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import "katex/dist/katex.min.css";
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://cdn.jsdelivr.net/gh/vsalvino/computer-modern@main/fonts/serif.css");
+
+.firaCode {
+  font-family: "Fira Code";
+}
 
 body {
-  margin: 20px 0px;
+  margin: 0;
   padding: 0;
+  background-color: #ffffff;
+  position: relative;
+
+  font-family: "DM Sans";
+  font-size: 16px;
+}
+
+h1 {
+  display: inline-block;
+
+  font-family: "DM Sans";
+  font-weight: 300;
+  font-size: 24px;
+
+  color: white;
+}
+
+body p, li, h3 {
+  font-family: "Fira Code";
+}
+
+.media-item-body {
+  display: inline-flex;
+  padding: 0 40px;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #0f0f0f;
+  border-radius: 10px;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+
+  background-color: #0f0f0f;
+  color: white;
+  padding: 0px 40px;
+  margin-bottom: 40px;
+}
+
+header .media-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+header h1 {
+  font-family: "DM Sans";
+  font-weight: bold;
+  font-size: 2rem;
+
+  background: none;
+  padding: 0;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+
+  font-size: 1.5rem;
+}
+
+header a:hover {
+  text-decoration: none;
+}
+
+details {
+  margin-bottom: 20px;
+}
+
+details ul {
+  padding: 20px 40px;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary {
+  padding: 12px 41px;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+
+  font-family: "Fira Code";
+  font-size: large;
+
+  transition: 0.25s ease;
+}
+
+details summary::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+
+  background-image: url("assets/chevron-down.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  transition: transform 0.25s ease;
+}
+
+details[open] summary::before {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+details summary:hover {
+  background-color: #e0e0e0;
+  transform: scaleX(0.995);
+  transition: 0.25s ease;
+}
+
+details[open] summary {
+  background-color: #e0e0e0;
+  transition: 0.25s ease;
+}
+
+canvas {
+  display: block;
+}
+
+select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px black solid;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+
+  background-image: url("./assets/chevron-down.svg");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
 
   font-family: "DM Sans";
 }
 
+select::-ms-expand {
+    display: none;
+}
+
+input[type="text"] {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px black solid;
+
+  font-family: "Fira Code";
+}
+
+input[type="range"] {
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #0f0f0f;
+  border-radius: 100%;
+  cursor: pointer;
+  margin-top: -5px;
+  transition: 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+}
+
+/* track excluding Firefox */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #dadada;
+  border-radius: 5px;
+}
+
+/* Firefox track */
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: #2a2a2a;
+  border-radius: 5px;
+}
+
+
+button {
+  background: #ffffff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 1px black solid;
+
+  cursor: pointer;
+
+  font-family: "DM Sans";
+
+  transition: 0.25s ease;
+}
+
+button:hover {
+  background: #e0e0e0;
+  transition: 0.25s ease;
+}
+
+button:active {
+  transform: scale(0.975);
+  transition: 0.25s ease;
+}
+
+input[type=radio] {
+  appearance: none;
+}
+
+label:has([type=radio]) {
+  background: #ffffff;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px 5px;
+
+  cursor: pointer;
+
+  transform: scale(0.95);
+  opacity: 0.65;
+  transition: 0.25s ease;
+}
+
+label:has([type=radio]):first-child {
+  background: linear-gradient(90deg,rgba(255, 255, 255, 1) 0%, rgba(255, 252, 247, 1) 35%, rgba(255, 245, 227, 1) 99%);
+}
+
+label:has([type=radio]):nth-child(2) {
+  background: linear-gradient(90deg,rgba(41, 41, 48, 1) 0%, rgba(24, 24, 38, 1) 35%, rgba(8, 8, 33, 1) 99%);
+  color: white
+}
+
+input[type="radio"] {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+
+  background-color: #ffffff;
+  border: 1px solid black;
+
+  transition: 0.25s ease;
+}
+
+input[type="radio"]::after {
+  content: "";
+  position: absolute;
+
+  width: 10px;
+  height: 10px;
+  background: black;
+  border-radius: 2.5px;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+
+  transition: 0.25s ease;
+}
+
+input[type="radio"]:checked::after {
+  opacity: 1;
+}
+
+label:hover {
+  opacity: 1;
+  transition: 0.25s ease;
+}
+
+label:active {
+  transform: scale(0.925);
+  transition: 0.25s ease;
+}
+
+label:has(input:checked) {
+  opacity: 1;
+  transform: scale(1);
+}
+
+input[type=checkbox] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+
+  cursor: pointer;
+  position: relative;
+
+  background-color: #ffffff;
+  border: 1px solid black;
+
+  transition: 0.25s ease;
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+
+  width: 12px;
+  height: 12px;
+  background: black;
+  border-radius: 2.5px;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+
+  transition: 0.25s ease;
+}
+
+input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+label:has(input[type="checkbox"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  transform: none;
+}
+
+input[type="checkbox"]:hover {
+  transition: 0.25s ease;
+}
+
+input[type="checkbox"]:active {
+  transform: scale(0.8);
+  transition: 0.25s ease;
+}
+
+/* imported from sarder.ca */
+.rb-ul {
+  background-image: linear-gradient(to right, #f53232, #f58032, #f5e832);
+  background-repeat: no-repeat;
+  background-size: 175% .25vh;
+  background-position: 0 100%;
+  
+  transition: 0.5s ease;
+}
+
+.rb-ul:hover {
+  background-image: linear-gradient(to right, #f53232, #f58032, #0ca852);
+  background-repeat: no-repeat;
+  background-size: 175% 5vh;
+  background-position: 0 100%;
+
+  transition: 0.5s ease;
+}
+
+.c {
+  font-family: 'Computer Modern Serif', serif;
+  font-size: 120%;
+
+  background: white;
+  padding: 2px 4px;
+  border-radius: 5px;
+}
+
+.cSameFont {
+  background: white;
+  padding: 2px 4px;
+  border-radius: 5px;
+}
+
 #wrapper {
-  display: flex;           /* stack children */
-  flex-direction: column-reverse;
+  display: flex;
+  flex-direction: column;
+}
+
+#functionMapper {
+  padding: 0 40px;
 }
 
 #container {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 20px;
+  gap: 40px;
   max-width: 100%;
-  margin-top: 20px;
 }
 
 #container > div:first-child {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   width: 250px;
-  margin-right: 20px;
+
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 20px;
 }
 
 #controls > div:first-child {
@@ -34,14 +434,132 @@ body {
   flex-direction: column;
 }
 
-#faq {
-  text-align: left;
-  padding: 10px 20px;
+#nControls, #areaControls, #sumControls {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
 }
 
-#faq b {
-  background-color: rgb(10, 10, 10);
-  padding: 5px 10px;
-  color: white;
+#intervalControls, #fnControls, #canvasBgControls div, #methodControls {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  align-items: center;
+}
+
+#intervalControls input {
+  min-width: 0;
+}
+
+#fnControls input {
+  flex: 1;
+  min-width: 0;
+}
+
+#canvasBgControls label {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+
+  align-items: top;
+  text-align: left;
+}
+
+#methodControls select {
+  flex: 1;
+  min-width: 0;
+}
+
+#computations {
+  text-align: left;
+  padding: 10px 40px;
+  gap: 20px;
+}
+
+.outputs {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.output {
+  flex: 1;
+  height: 135px;
   border-radius: 10px;
+  background-color: #f1f1f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  display: flex;
+  flex-direction: row;
+
+  font-size: 0.8rem;
+}
+
+.methodInfo {
+  flex: 32.5%;
+  margin-left: 25px;
+
+  font-family: "Fira Code";
+}
+
+.expression {
+  flex: 67.5%;
+  padding: 25px;
+  align-items: center;
+  background: white;
+  padding: 5px;
+  border-radius: 10px;
+  margin-right: 25px;
+  width: 100%;
+
+  font-size: 0.8rem;
+}
+
+.errors {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.error {
+  padding: 5px 25px;
+  height: auto;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 16px;
+}
+
+#faq {
+  text-align: left;
+  padding: 0 40px;
+  margin-bottom: 20px;
+}
+
+#faq li {
+  margin-bottom: 5px;
+}
+
+#faq ul {
+  list-style-type: square;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+
+  background-color: #0f0f0f;
+  color: white;
+  padding: 0px 40px;
+}
+
+footer p {
+  font-family: "DM Sans";
 }
