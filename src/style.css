@@ -18,31 +18,52 @@ body {
   font-size: 16px;
 }
 
-h1 {
-  display: inline-block;
-
-  font-family: "DM Sans";
-  font-weight: 300;
-  font-size: 24px;
-
-  color: white;
-}
-
 body p, li, h3 {
   font-family: "Fira Code";
 }
 
 .media-item-body {
-  display: inline-flex;
-  padding: 0 40px;
-  margin-bottom: 20px;
-  gap: 12px;
+  display: flex;
+  position: relative;
+  
+  margin-bottom: 25px;
+  gap: 16px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 
-  background-color: #0f0f0f;
   border-radius: 10px;
+}
+
+.media-item-body::after {
+  content: "";
+  flex: 1;
+
+  height: 2px;
+  background: #e0e0e0;
+}
+
+.media-item-body img {
+  background-color: #0f0f0f;
+  padding: 4px;
+  border-radius: 5px;
+
+  transition: 0.25s ease;
+}
+
+.media-item-body img:hover {
+  transform: scale(1.1);
+  transition: 0.25s ease;
+}
+
+h1 {
+  display: inline-block;
+
+  font-family: "DM Sans";
+  font-weight: 600;
+  font-size: 1.5rem;
+
+  color: #0f0f0f;
 }
 
 header {
@@ -54,7 +75,7 @@ header {
   background-color: #0f0f0f;
   color: white;
   padding: 0px 40px;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 
 header .media-item {
@@ -71,6 +92,8 @@ header h1 {
 
   background: none;
   padding: 0;
+
+  color: white;
 }
 
 header a {
@@ -84,14 +107,22 @@ header a:hover {
   text-decoration: none;
 }
 
+li {
+  margin-bottom: 10px;
+}
+
 details {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 details ul {
-  padding: 20px 40px;
+  padding: 25px 40px;
   background-color: #f1f1f1;
   border-radius: 10px;
+}
+
+details li:last-child {
+  margin-bottom: 0;
 }
 
 details summary::-webkit-details-marker {
@@ -195,7 +226,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-webkit-slider-thumb:active {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 /* track excluding Firefox */
@@ -374,6 +405,7 @@ input[type="checkbox"]:active {
   background-size: 175% .25vh;
   background-position: 0 100%;
   
+  transform: scale(0.95);
   transition: 0.5s ease;
 }
 
@@ -383,6 +415,7 @@ input[type="checkbox"]:active {
   background-size: 175% 5vh;
   background-position: 0 100%;
 
+  transform: scale(1);
   transition: 0.5s ease;
 }
 
@@ -421,11 +454,11 @@ input[type="checkbox"]:active {
 #container > div:first-child {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   width: 250px;
 
   background-color: #f1f1f1;
-  padding: 20px;
+  padding: 25px;
   border-radius: 20px;
 }
 
@@ -441,7 +474,7 @@ input[type="checkbox"]:active {
   gap: 10px;
 }
 
-#intervalControls, #fnControls, #canvasBgControls div, #methodControls {
+#intervalControls, #fnControls, #canvasBgControls > div, #methodControls {
   display: flex;
   width: 100%;
   gap: 10px;
@@ -474,18 +507,25 @@ input[type="checkbox"]:active {
 #computations {
   text-align: left;
   padding: 10px 40px;
-  gap: 20px;
 }
 
-.outputs {
+#outputs {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 25px;
+}
+
+.outputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
 }
 
 .output {
   flex: 1;
-  height: 135px;
+  height: auto;
+  padding: 25px 0;
   border-radius: 10px;
   background-color: #f1f1f1;
   display: flex;
@@ -495,7 +535,7 @@ input[type="checkbox"]:active {
   display: flex;
   flex-direction: row;
 
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .methodInfo {
@@ -507,46 +547,88 @@ input[type="checkbox"]:active {
 
 .expression {
   flex: 67.5%;
-  padding: 25px;
   align-items: center;
   background: white;
-  padding: 5px;
+  padding: 0px;
   border-radius: 10px;
   margin-right: 25px;
   width: 100%;
-
-  font-size: 0.8rem;
 }
 
-.errors {
+#errors {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 25px;
 }
 
 .error {
+  flex: 1;
   padding: 5px 25px;
   height: auto;
   border-radius: 10px;
   background-color: #f1f1f1;
+  
   justify-content: center;
   align-items: center;
 
-  font-size: 16px;
+  font-size: 0.9rem;
+}
+
+.error:first-child {
+  flex: 2 1 calc(75px);
+}
+
+.errorBoxes { 
+  gap: 25px;
+  margin: 25px 0;
+
+  height: 100px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.errorBox {
+  flex: 1;
+  padding: 5px 25px;
+  gap: 20px;
+  align-items: center;
+
+  background: white;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: row;
+
+  font-size: 0.85rem;
+}
+
+.errorBox > div:first-child p {
+  margin: 0;
+}
+
+.errorValue {
+  flex: 1;
+  width: 100%;
+
+  justify-content: center;
+  align-items: center;
+
+  display: flex;
+  flex-direction: row;
 }
 
 #faq {
   text-align: left;
   padding: 0 40px;
-  margin-bottom: 20px;
-}
-
-#faq li {
-  margin-bottom: 5px;
+  margin-bottom: 25px;
 }
 
 #faq ul {
   list-style-type: square;
+
+  font-size: 14px;
 }
 
 footer {

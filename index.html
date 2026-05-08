@@ -41,55 +41,102 @@
           <h1>computations</h1>
         </div>
 
-        <div class="outputs">
-          <div class="output">
-            <div class="methodInfo"></div>
-            <div class="expression"></div>
+        <div id="outputs">
+          <div class="outputRow">
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
           </div>
 
-          <div class="output">
-            <div class="methodInfo"></div>
-            <div class="expression"></div>
-          </div>
-
-          <div class="output">
-            <div class="methodInfo"></div>
-            <div class="expression"></div>
-          </div>
-          
-          <div class="output">
-            <div class="methodInfo"></div>
-            <div class="expression"></div>
+          <div class="outputRow">
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+            
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
           </div>
         </div>
 
         <br>
 
-        <div class="errors">
-          <div class="error midpointError">
-            <h3><b>Calculating error from Midpoint Rule approximations</b></h3>
-            <p>The error bound for the <b>Midpoint Rule</b>, $|E_M|$, represents the maximum difference between the true integral and the midpoint rule approximation, $M_n$.</p>
-            <p>The formula for the error bound is the inequality $|{E_M}| \le \frac{K(b-a)^3}{24n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
-            <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
+        <div id="errors">
+          <div class="error">
+            <h3><b>Compute errors</b> (to 6 decimal places)</h3>
+            
+            <div class="errorBoxes">
+              <div class="errorBox">
+                <div>
+                  <p><b>Midpoint Rule Error</b></p>
+                  <p>$a =$<span class="c aValue"></span>, $b =$<span class="c bValue"></span>, $n =$<span class="c nValue"></span></p>
+                </div>
+                <div class="errorValue">
+                  <p>$|E_M| \le$</p>
+                  <div id="midpointError"></div>
+                </div>
+              </div>
+
+              <div class="errorBox">  
+                <div>
+                  <p><b>Trapezoidal Rule Error</b></p>
+                  <p>$a =$<span class="c aValue"></span>, $b =$<span class="c bValue"></span>, $n =$<span class="c nValue"></span></p>
+                </div>
+                <div class="errorValue">
+                  <p>$|E_T| \le$</p>
+                  <div id="trapezoidalError"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <div id="errorLabel" class="firaCode"></div>
+              <br>
+              <div id="errorButtonContainer"></div>
+            </div>
+
+            <p><i><b>Note:</b> Errors in this toolkit are guaranteed to be calculated accurately if $f(x)$ is at least three times differentiable on $[a, b]$, meaning all derivatives of $f(x)$ up to $f'''(x)$ should exist at all points across the interval $[a, b]$. As a rule of thumb, most functions that are continuously differentiable are generally smooth (i.e., no corners or cusps, no discontinuities, and no vertical tangents) across their whole domain.</i></p>
+            <p>Since we already have $a$, $b$, and $n$, we only need to solve for $K$. However, since most JavaScript plugins are unable to solve for exact maximum function values across an interval, we use a hybrid of two methods to numerically compute $\max_{x\in[a,b]} |f''(x)|$:</p>
             <ol>
-              <li>Find the second derivative $f''(x)$, which in this case is <span class="secondDeriv"></span>.</li>
-              <li>Calculate $K$, represented by $\max_{x\in[a,b]} |f''(x)|$.</li>
-              <li>Plug in the found values of $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{24n^2}$.</li>
-              <li>Interpret $\frac{K(b-a)^3}{24n^2}$ as the guaranteed upper limit of the approximation's error. In other words, the error $|{E_M}|$ is less than or equal to $\frac{K(b-a)^3}{24n^2}$.</li>
+              <li><b>Bisection method:</b> This method is used in an algorithm to check the derivative of $|f''(x)|$ for sign changes along the interval $[a, b]$ by iterating through values with a set number of steps. If x at a previous step multiplied by x at the current step is less than or equal to 0, a sign change occured, and x is detected as an approximate root. If you're interested, more information can be found <a href="https://en.wikipedia.org/wiki/Bisection_method">here</a>.</li>
+              <li><b>Newton's method:</b> This method is used to refine the precision of each approximate root found. The algorithm analyzes the slope and curvature of local behaviour a certain number of times, each time getting closer and closer to the exact value of each root. If you're interested, more information can be found at <a href="https://en.wikipedia.org/wiki/Newton%27s_method">here</a>.</li>
             </ol>
           </div>
 
-          <div class="error trapezoidalError">
-            <h3><b>Calculating error from Trapezoidal Rule approximations</b></h3>
-            <p>The error bound for the <b>Trapezoidal Rule</b>, $|E_T|$, represents the maximum difference between the true integral and the midpoint rule approximation, $T_n$.</p>
-            <p>The formula for the error bound is the inequality $|{E_T}| \le \frac{K(b-a)^3}{12n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
+          <div class="error midpointError">
+            <h3><b>Interpreting the Midpoint Rule error bound</b></h3>
+            <p>The error bound for the <b>Midpoint Rule</b> represents the maximum difference between the true integral and the midpoint rule approximation.</p>
+            <p>The formula for the error bound is the inequality $|{E_M}| \le \frac{K(b-a)^3}{24n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
             <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
+            <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
             <ol>
               <li>Find the second derivative $f''(x)$, which in this case is <span class="secondDeriv"></span>.</li>
-              <li>Calculate $K$, represented by $\max_{x\in[a,b]} |f''(x)|$.</li>
-              <li>Plug in the found values of $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{12n^2}$.</li>
-              <li>Interpret $\frac{K(b-a)^3}{12n^2}$ as the guaranteed upper limit of the approximation's error. In other words, the error $|{E_T}|$ is less than or equal to $\frac{K(b-a)^3}{12n^2}$.</li>
+              <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
+              <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{24n^2}$.</li>
             </ol>
+            <p>The expression $\frac{K(b-a)^3}{24n^2}$ provides the guaranteed upper bound of the approximation's error; that is, the absolute error $|{E_M}|$ is at most $\frac{K(b-a)^3}{24n^2}$.</p>
+          </div>
+
+          <div class="error trapezoidalError">
+            <h3><b>Interpreting the Trapezoidal Rule error bound</b></h3>
+            <p>The error bound for the <b>Trapezoidal Rule</b> represents the maximum difference between the true integral and the trapezoidal rule approximation.</p>
+            <p>The formula for the error bound is the inequality $|{E_T}| \le \frac{K(b-a)^3}{12n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
+            <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
+            <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
+            <ol>
+              <li>Find the second derivative $f''(x)$, which in this case is <span class="secondDeriv"></span>.</li>
+              <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
+              <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{12n^2}$.</li>
+            </ol>
+            <p>The expression $\frac{K(b-a)^3}{12n^2}$ provides the guaranteed upper bound of the approximation's error; that is, the absolute error $|{E_T}|$ is at most $\frac{K(b-a)^3}{12n^2}$.</p>
           </div>
         </div>
       </div>
@@ -126,25 +173,21 @@
         <details class="section">
           <summary><b>Current limitations and restrictions</b></summary>
           <ul>
-            <li>This visualizer currently will not work on mobile devices. The current canvas resolutions require a screen resolution of at least 1920x1080. Note that if your screen's resolution is smaller, you can zoom out to use the canvas (however, visuals will appear blurry).</li>
+            <li>This visualizer currently will not work on mobile devices. The current canvas resolutions require a screen resolution of at least 1920x1080. Note that if your screen's resolution is smaller, you can zoom out to use the canvas (however, visuals may appear blurrier than normal).</li>
             <li>Most functions with asymptotic, divergent, or jump behaviour are rendered awkwardly using p5.js shape construction (try inputting tan(x) or log10(x) for example). <i>Note that the sum computations for these "awkward" functions should remain accurate and correct</i>. Accurate visual representation of these functions often require complex workarounds and often handled case by case. While I may implement solutions in the future, feel free to recommend or test your own solutions by copying the open source GitHub repository at <a href="https://github.com/imthecon">https://github.com/imthecon</a>.</li>
             <li>While an input of a > b (and vice versa) is considered valid, the a and b values listed in the "computations" section will always have a = min(a, b) and b = max(a, b).</li>
-            <li>As of now, the trapezoid method only allows for subdivisions with equivalent dx (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths. Plausible ideas like a "Drag to change width" option may be implemented in the (not so near) future.</li>
+            <li>As of now, the trapezoid method only allows for subdivisions with equivalent dx (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths.</li>
             <li>Trapezoids (in the Trapezoid method) will not highlight nor show their area upon hovering. Although, since trapezoids are not much more complex than rectangles, a solution will be implemented as soon as time permits.</li>
             <li>Other numerical integration methods like Simpson's Rule might be added in the future. If you understand mathematics and JavaScript better than me, once again, feel free to add any of your own methods or features to a copy of the repository.</li>
-            <li>It may be important to note that sum and area computations are rounded to <i>6</i> decimal points if necessary.</li>
-            <li>Any number that a computation deems small enough (especially when calculating the area of rectangles/trapezoids) may be rounded down to 0 despite not truly being exactly 0.</li>
+            <li>Any number that a computation deems small enough (e.g., 0.0001 to 3 decimal places = 0.000) may be rounded down to 0 despite not truly being exactly 0.</li>
             <li>When computing the second derivative, variables (i.e., letters) other than x are treated as constants and will still compute properly. However, the canvas will not render the function with variables other than x.</li>
-            <li>Sum computations will use either "$=$" and "$\approx$". A computation will use "$=$" if the rounded result is within a certain epsilon (currently 1e-12) value of the exact answer (or is the exact answer), otherwise the answer will be represented with "$\approx$".</li>
+            <li>Sum computations will use either "$=$" or "$\approx$". A computation will use "$=$" if the rounded result is within a certain epsilon (currently 1e-12) value of the exact answer (or is the exact answer), otherwise the answer will be represented with "$\approx$".</li>
           </ul>
         </details>
       </div>
 
       <!--
       <ul>
-        <li>- add midpoint error bound and trapezoidal error bound, (maybe simpsons too)</li>
-        <li>- add checkbox selectors for the functions (coloured signed area?)</li>
-        <li>- add rounding options (sum round to, area round to, etc.)</li>
         <li>- add fraction/constant/other number inputs for a and b.</li>
         <li>- add trapezoid individual area calculations (on hover)</li>
         <li>- add copy latex result to each of the sum approximations</li>

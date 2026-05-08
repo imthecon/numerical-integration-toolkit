@@ -36,6 +36,7 @@ const functionMapper = (p) => {
   let areaRoundTo = 2;
   let sumRoundTo = 6;
   const deltaXRoundTo = 3;
+  const errorRoundTo = 6;
 
   const scaleOverflowLimit = 200; // currently unused
   const zoomFactor = 2; // since 25 * 2^n divides 1600 and 800 up to n = 5 (i.e., 5 zoom levels)
@@ -106,6 +107,14 @@ const functionMapper = (p) => {
 
   let subdivisions = [];
 
+  let midpointError;
+  let trapezoidalError;
+
+  let calculateErrorButton;
+  let errorButtonContainer;
+
+  let errorNeedsRecompute = true;
+
   p.setup = () => {
     container = p.createDiv();
     container.id("container");
@@ -152,13 +161,13 @@ const functionMapper = (p) => {
     intervalControls.id("intervalControls");
     intervalControls.parent(controls);
 
-    aLabel = p.createSpan("a:");
+    aLabel = p.createSpan("<i>a</i>:");
     aLabel.parent(intervalControls);
 
     aInput = p.createInput(0);
     aInput.parent(intervalControls);
 
-    bLabel = p.createSpan("b:");
+    bLabel = p.createSpan("<i>b</i>:");
     bLabel.parent(intervalControls);
 
     bInput = p.createInput(6.28);
@@ -172,14 +181,6 @@ const functionMapper = (p) => {
     fnLabel.parent(fnControls);
 
     fnInput = p.createInput("sin(x)");
-    fnInput.input(() => {
-      fnString = fnInput.value();
-      f = parseFunction(fnInput.value()); // detect when the user changes their function input
-      computeSum(sumRoundTo);
-
-      // for calculating error bounds
-      updateSecondDerivative();
-    });
     fnInput.parent(fnControls);
 
     // only zoom in/out when user hovers over canvas
@@ -187,9 +188,9 @@ const functionMapper = (p) => {
     canvas.mouseOut(() => isHoveringCanvas = false);
 
     userInputLabel = p.createDiv(
-      "<b>a</b> = the start of the interval<br>" +
-      "<b>b</b> = the end of the interval<br>" +
-      "<b>n</b> = the number of subdivisions (rectangles or trapezoids)<br>")
+      "<b><i>a</i></b> = the start of the interval<br>" +
+      "<b><i>b</i></b> = the end of the interval<br>" +
+      "<b><i>n</i></b> = the number of subdivisions (rectangles or trapezoids)<br>")
     userInputLabel.parent(controls);
 
     areaControls = p.createDiv();
@@ -236,20 +237,47 @@ const functionMapper = (p) => {
     resetCanvasButton.parent(controls);
     resetCanvasButton.mousePressed(resetCanvasPos);
 
+    errorButtonContainer = p.select("#errorButtonContainer");
+
+    calculateErrorButton = p.createButton("Calculate Error");
+    calculateErrorButton.parent(errorButtonContainer);
+    calculateErrorButton.mousePressed(calculatef2Error);
+
     // update important values when user changes any relevant input
-    methodSelect.changed(updateAll);
+    methodSelect.changed(updateSums);
+
     nSlider.input(updateAll);
-    aInput.input(clampIntervalInputs); // includes updateAll
-    bInput.input(clampIntervalInputs); // includes updateAll
-    sumRoundToSlider.input(updateAll);
+    
+    aInput.input(() => {
+      clampIntervalInputs(); // also updateAll
+      updateErrorLabel();
+    });
+
+    bInput.input(() => {
+      clampIntervalInputs(); // also updateAll
+      updateErrorLabel();
+    });
+
+    fnInput.input(() => {
+      fnString = fnInput.value();
+      f = parseFunction(fnInput.value()); // detect when the user changes their function input
+      updateAll();
+
+      // for calculating error bounds
+      updateSecondDerivative();
+    });
+
+    sumRoundToSlider.input(() => {
+      updateSums()
+    });
+
     cutTrailingCheckbox.input(() => {
       cutTrailing = cutTrailingCheckbox.checked();
       updateAll();
     });
-    
-    computeSum(sumRoundTo); // preload computed sums upon page loading
-    returnValues(); // preload HTML values of relevant variables upon page loading
+
     updateSecondDerivative(); // preload second derivative upon page loading
+    updateAll() // preload computations upon page loading
   };
 
   p.draw = () => {
@@ -386,6 +414,9 @@ const functionMapper = (p) => {
     let startX = (-centerX - offsetX) / scaling;
     let endX = (p.width - centerX - offsetX) / scaling;
 
+    let startY = (-centerY - offsetY) / scaling;
+    let endY = (p.height - centerY - offsetY) / scaling;
+
     p.beginShape();
 
     for (let x = startX; x <= endX; x += 0.025) {
@@ -427,7 +458,7 @@ const functionMapper = (p) => {
     p.noStroke();
 
     if (mode == "Light") {
-      p.fill(0, 75);
+      p.fill(0, 100);
     } else {
       p.fill(255, 200);
     }
@@ -520,9 +551,27 @@ const functionMapper = (p) => {
     }
   };
 
-  function updateAll() {
+  function updateSums() {
     computeSum(sumRoundToSlider.value());
     returnValues();
+  }
+
+  function updateErrorLabel() {
+    if (errorNeedsRecompute) {
+      document.getElementById("errorLabel").innerHTML = "Error calculations <b>may not be updated</b>.";
+    } else {
+      document.getElementById("errorLabel").innerHTML = "Error calculations <b>are updated</b>.";
+    }
+  }
+
+  function updateAll() {
+    setErrorNeedsRecompute(true);
+    updateSums();
+  }
+
+  function setErrorNeedsRecompute(bool) {
+    errorNeedsRecompute = bool;
+    updateErrorLabel();
   }
 
   function computeSum(roundTo) {
@@ -583,7 +632,7 @@ const functionMapper = (p) => {
       };
 
       container.querySelector('.methodInfo').innerHTML = `
-        <b>${method}:</b><br>
+        <b>${method} Sum</b><br>
         x<sub>i</sub> = ${xSubI}<br>
         a = <span class="c">${Math.min(a, b)}</span><br>
         Δx = <span class="c">${+dx.toFixed(deltaXRoundTo)}</span><br>
@@ -629,6 +678,92 @@ const functionMapper = (p) => {
 
       el.innerHTML = `<span class="cSameFont">${latexOutput}</span>`;
     });
+  };
+
+  function calculatef2Extrema() {
+    let a = parseFloat(aInput.value());
+    let b = parseFloat(bInput.value());
+    let n = nSlider.value();
+
+    let f3 = math.derivative(f2, "x");
+    let f4 = math.derivative(f3, "x");
+    
+    let critPoints = [a, b];
+    let steps = 5000;
+    let stepSize = (b - a) / steps;
+
+    let prev = f3.evaluate({ x: a }); // initialize first previous value
+
+    for (let i = 0; i <= steps; i++) {
+      let k = a + i * stepSize;
+
+      let curr = f3.evaluate({ x: k });
+
+      // detect a critical point in the derivative of f2 (flipped signs)
+      if (prev * curr <= 0) {
+        // Newton's method to find more precise critical points
+        let kRefined = k;
+
+        for (let j = 0; j < 5; j++) {
+          let fx = f3.evaluate({ x: kRefined });
+          let fx2 = f4.evaluate({ x: kRefined });
+
+          if (Math.abs(fx2) < epsilon) break;
+
+          kRefined = kRefined - fx / fx2;
+        }
+
+        critPoints.push(kRefined);
+      }
+
+      prev = curr;
+    }
+    
+    return critPoints;
+  };
+
+  // this function should be changed to a .forEach() output system if more errors need to be calculated
+  function calculatef2Error() {
+    let a = parseFloat(aInput.value());
+    let b = parseFloat(bInput.value());
+    let n = nSlider.value();
+
+    let critPoints = calculatef2Extrema();
+    let maxVal = -Infinity;
+    let maxX;
+    let errorConstant;
+
+    // calculate the max of |f''(x)| on [a, b]
+    for (let x of critPoints) {
+      let val = Math.abs(f2.evaluate({ x }));
+
+      if (val > maxVal) {
+        maxVal = val;
+        maxX = x;
+      }
+    }
+
+    errorConstant = maxVal;
+
+    midpointError = (errorConstant * (b-a) ** 3) / (24 * n ** 2);
+    trapezoidalError = (errorConstant * (b-a) ** 3) / (12 * n ** 2);
+
+    let roundedMidpoint;
+    let roundedTrapezoidal;
+
+    if (cutTrailing) {
+      roundedMidpoint = Number(midpointError.toFixed(errorRoundTo));
+      roundedTrapezoidal = Number(trapezoidalError.toFixed(errorRoundTo));
+    } else {
+      roundedMidpoint = midpointError.toFixed(errorRoundTo);
+      roundedTrapezoidal = trapezoidalError.toFixed(errorRoundTo);
+    }
+
+    document.getElementById("midpointError").innerHTML = `<span class="c">${roundedMidpoint}</span>`
+
+    document.getElementById("trapezoidalError").innerHTML = `<span class="c">${roundedTrapezoidal}</span>`
+
+    setErrorNeedsRecompute(false);
   };
 
   function drawRiemannRectanglesLeft(a, b, n) {
