@@ -9,8 +9,9 @@
   <body>
     <div id="wrapper">
       <header>
-        <div>
+        <div class="project-head">
           <h1>numerical integration toolkit</h1>
+          <h2>an open-source visual calculator</h2>
         </div>
 
         <div class="media-item">
@@ -20,13 +21,13 @@
 
         <div class="media-item">
           <img src="/src/assets/github.svg" width="24px" height="24px">
-          <h2 class="rb-ul"><a href="https://github.com/imthecon">github repo</a></h2>
+          <h2 class="rb-ul"><a href="https://github.com/imthecon/numerical-integration-toolkit">github repo</a></h2>
         </div>
       </header>
 
       <div id="functionMapper">
         <div class="media-item-body">
-          <img class="textImg1" src="/src/assets/f(x).svg" width="24px" height="24px">
+          <img class="textImg1" src="/src/assets/fx.svg" width="24px" height="24px">
           <h1>function mapper</h1>
         </div>
         <div id="canvasContainer"></div>
@@ -122,11 +123,11 @@
           <div class="error midpointError">
             <h3><b>Interpreting the Midpoint Rule error bound</b></h3>
             <p>The error bound for the <b>Midpoint Rule</b> represents the maximum difference between the true integral and the midpoint rule approximation.</p>
-            <p>The formula for the error bound is the inequality $|{E_M}| \le \frac{K(b-a)^3}{24n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
+            <p>The formula for the error bound is the inequality $|{E_M}| \le \frac{K(b-a)^3}{24n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the closed interval $[a, b]$.</p>
             <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
             <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
             <ol>
-              <li>Find the second derivative $f''(x)$, which in this case is <span class="secondDeriv"></span>.</li>
+              <li>Find the second derivative $f''(x)$, which is <span class="secondDeriv"></span>.</li>
               <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
               <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{24n^2}$.</li>
             </ol>
@@ -136,11 +137,11 @@
           <div class="error trapezoidalError">
             <h3><b>Interpreting the Trapezoidal Rule error bound</b></h3>
             <p>The error bound for the <b>Trapezoidal Rule</b> represents the maximum difference between the true integral and the trapezoidal rule approximation.</p>
-            <p>The formula for the error bound is the inequality $|{E_T}| \le \frac{K(b-a)^3}{12n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the interval $[a, b]$, and $n$ is the number of subdivisions used.</p>
+            <p>The formula for the error bound is the inequality $|{E_T}| \le \frac{K(b-a)^3}{12n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the closed interval $[a, b]$.</p>
             <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
             <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
             <ol>
-              <li>Find the second derivative $f''(x)$, which in this case is <span class="secondDeriv"></span>.</li>
+              <li>Find the second derivative $f''(x)$, which is <span class="secondDeriv"></span>.</li>
               <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
               <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{12n^2}$.</li>
             </ol>
@@ -183,8 +184,9 @@
           <summary><b>Current limitations and restrictions</b></summary>
           <ul>
             <li>This visualizer currently will not work on mobile devices. The current canvas resolutions require a screen resolution of at least 1920x1080. Note that if your screen's resolution is smaller, you can zoom out to use the canvas (however, visuals may appear blurrier than normal).</li>
-            <li>Most functions with asymptotic, divergent, or jump behaviour are rendered awkwardly using p5.js shape construction (try inputting tan(x) or log10(x) for example). <i>Note that the sum computations for these "awkward" functions should remain accurate and correct</i>. Accurate visual representation of these functions often require complex workarounds and often handled case by case. While I may implement solutions in the future, feel free to recommend or test your own solutions by copying the open source GitHub repository at <a href="https://github.com/imthecon">https://github.com/imthecon</a>.</li>
-            <li>While an input of $a > b$ (and vice versa) is considered valid, the $a$ and $b$ values listed in the "computations" section will always have $a = \min(a, b)$ and $b = \max(a, b)$.</li>
+            <li>Most functions with asymptotic, divergent, or jump behaviour are rendered awkwardly using p5.js shape construction (try inputting tan(x) or log10(x) for example). <i>Note that the sum computations for these "awkward" functions should remain accurate and correct</i>. Accurate visual representation of these functions often require complex workarounds and often handled case by case. While I may implement solutions in the future, feel free to recommend or test your own solutions by copying the open source GitHub repository at <a href="https://github.com/imthecon/numerical-integration-toolkit">https://github.com/imthecon/numerical-integration-toolkit</a>.</li>
+            <li>While an interval where $a > b$ (and vice versa) is considered valid, the $a$ and $b$ values listed in the "computations" section will always have $a = \min(a, b)$ and $b = \max(a, b)$.</li>
+            <li>Inputting incredibly large (or incredibly small) values for the interval may lead to computational error due to accumulated floating point calculations. It's best practice to keep interval values realistic, especially for visual purposes.</li>
             <li>The trapezoid method only allows for subdivisions with equivalent $dx$ (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths.</li>
             <li>Other numerical integration methods like Simpson's Rule might be added in the future. If you understand mathematics and JavaScript better than me, once again, feel free to add any of your own methods or features to a copy of the repository.</li>
             <li>Any number that a computation deems small enough (e.g., 0.0001 to 3 decimal places = 0.000) may be rounded down to 0 despite not truly being exactly 0.</li>
@@ -193,18 +195,10 @@
           </ul>
         </details>
       </div>
-
-      <!--
-      <ul>
-        <li>- add fraction/constant/other number inputs for a and b.</li>
-        <li>- add trapezoid individual area calculations (on hover)</li>
-        <li>- add copy latex result to each of the sum approximations</li>
-      </ul>
-    -->
     </div>
 
     <footer>
-      <p>created by <b>sarder</b> (2026)</p>
+      <p>built with p5.js&ensp;•&ensp;© 2026 <b>sarder</b> - licensed under Apache 2.0</p>
     </footer>
   </body>
 </html>

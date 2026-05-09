@@ -174,13 +174,13 @@ const functionMapper = (p) => {
     aLabel = p.createSpan("<i>a</i>:");
     aLabel.parent(intervalControls);
 
-    aInput = p.createInput(0);
+    aInput = p.createInput("0");
     aInput.parent(intervalControls);
 
     bLabel = p.createSpan("<i>b</i>:");
     bLabel.parent(intervalControls);
 
-    bInput = p.createInput("6.28");
+    bInput = p.createInput("2pi");
     bInput.parent(intervalControls);
 
     fnControls = p.createDiv();
@@ -514,6 +514,7 @@ const functionMapper = (p) => {
   }
 
   function clampIntervalInputs() {
+    /* currently bugged (does not allow for decimal inputs)
     let aStr = aInput.value().trim();
     let bStr = bInput.value().trim();
 
@@ -535,6 +536,7 @@ const functionMapper = (p) => {
 
     aInput.value(a);
     bInput.value(b);
+    */
 
     updateAll();
   }
@@ -676,6 +678,10 @@ const functionMapper = (p) => {
       if (cutTrailing) {
         rounded = Number(result.toFixed(roundTo));
       } else {
+        let scale = Math.max(1, Math.abs(result));
+        if (Math.abs(result) < epsilon * scale) { // detect floating point arithmetic error near zero for most inputs
+          result = 0;
+        }
         rounded = result.toFixed(roundTo);
       };
 
@@ -709,11 +715,11 @@ const functionMapper = (p) => {
     let n = nSlider.value();
     
     document.querySelectorAll(".aValue").forEach(el => {
-      el.innerHTML = Math.min(a, b);
+      el.innerHTML = +Math.min(a, b).toFixed(5);
     });
 
     document.querySelectorAll(".bValue").forEach(el => {
-      el.innerHTML = Math.max(a, b);
+      el.innerHTML = +Math.max(a, b).toFixed(5);
     });
 
     document.querySelectorAll(".nValue").forEach(el => {
