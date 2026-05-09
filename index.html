@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/numerical-integration-toolkit/assets/sigma-D1at5qYT.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>numerical integration toolkit</title>
+    <script type="module" crossorigin src="/numerical-integration-toolkit/assets/index-DfG7bsc4.js"></script>
+    <link rel="stylesheet" crossorigin href="/numerical-integration-toolkit/assets/index-CYgxZp2z.css">
+  </head>
+  <body>
+    <div id="wrapper">
+      <header>
+        <div class="project-head">
+          <h1>numerical integration toolkit</h1>
+          <h2>an open-source visual calculator</h2>
+        </div>
+
+        <div class="media-item">
+          <img id="home" width="24px" height="24px">
+          <h2 class="rb-ul"><a href="https://sarder.ca">home</a></h2>
+        </div>
+
+        <div class="media-item">
+          <img id="github" width="24px" height="24px">
+          <h2 class="rb-ul"><a href="https://github.com/imthecon/numerical-integration-toolkit">github repo</a></h2>
+        </div>
+      </header>
+
+      <div id="functionMapper">
+        <div class="media-item-body">
+          <img class="textImg1" id="fx" width="24px" height="24px">
+          <h1>function mapper</h1>
+        </div>
+        <div id="canvasContainer"></div>
+      </div>
+
+      <br>
+
+      <div id="computations">
+        <div class="media-item-body">
+          <img id="mathSigns" width="28px" height="28px">
+          <h1>computations</h1>
+        </div>
+
+        <div id="outputs">
+          <div class="outputRow">
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+          </div>
+
+          <div class="outputRow">
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+            
+            <div class="output">
+              <div class="methodInfo"></div>
+              <div class="expression"></div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+        </div>
+      </div> 
+
+       <div id="errorsSection">
+        <div class="media-item-body">
+          <img class="textImg2" id="italicE" width="20px" height="20px">
+          <h1>error bounds</h1>
+        </div>
+
+        <div id="errors">
+          <div class="error">
+            <h3><b>Compute errors</b> (to 6 decimal places)</h3>
+            
+            <div class="errorBoxes">
+              <div class="errorBox">
+                <div>
+                  <p><b>Midpoint Rule Error</b></p>
+                  <p>$a =$<span class="c aValue"></span>, $b =$<span class="c bValue"></span>, $n =$<span class="c nValue"></span></p>
+                </div>
+                <div class="errorValue">
+                  <p>$|E_M| \le$</p>
+                  <div id="midpointError"></div>
+                </div>
+              </div>
+
+              <div class="errorBox">  
+                <div>
+                  <p><b>Trapezoidal Rule Error</b></p>
+                  <p>$a =$<span class="c aValue"></span>, $b =$<span class="c bValue"></span>, $n =$<span class="c nValue"></span></p>
+                </div>
+                <div class="errorValue">
+                  <p>$|E_T| \le$</p>
+                  <div id="trapezoidalError"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <div id="errorLabel" class="firaCode"></div>
+              <br>
+              <div id="errorButtonContainer"></div>
+            </div>
+
+            <p><i><b>Note:</b> Errors in this toolkit are guaranteed to be calculated accurately if $f(x)$ is at least three times differentiable on $[a, b]$, meaning all derivatives of $f(x)$ up to $f'''(x)$ should exist at all points across the interval $[a, b]$. As a rule of thumb, most functions that are continuously differentiable are generally smooth (i.e., no corners or cusps, no discontinuities, and no vertical tangents) across their whole domain.</i></p>
+            <p>Since we already have $a$, $b$, and $n$, we only need to solve for $K$. However, since most JavaScript plugins are unable to solve for exact maximum function values across an interval, we use a hybrid of two methods to numerically compute $\max_{x\in[a,b]} |f''(x)|$:</p>
+            <ol>
+              <li><b>Bisection method:</b> This method is used in an algorithm to check the derivative of $|f''(x)|$ for sign changes along the interval $[a, b]$ by iterating through values with a set number of steps. If x at a previous step multiplied by x at the current step is less than or equal to 0, a sign change occured, and x is detected as an approximate root. If you're interested, more information can be found <a href="https://en.wikipedia.org/wiki/Bisection_method">here</a>.</li>
+              <li><b>Newton's method:</b> This method is used to refine the precision of each approximate root found. The algorithm analyzes the slope and curvature of local behaviour a certain number of times, each time getting closer and closer to the exact value of each root. If you're interested, more information can be found at <a href="https://en.wikipedia.org/wiki/Newton%27s_method">here</a>.</li>
+            </ol>
+          </div>
+
+          <div class="error midpointError">
+            <h3><b>Interpreting the Midpoint Rule error bound</b></h3>
+            <p>The error bound for the <b>Midpoint Rule</b> represents the maximum difference between the true integral and the midpoint rule approximation.</p>
+            <p>The formula for the error bound is the inequality $|{E_M}| \le \frac{K(b-a)^3}{24n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the closed interval $[a, b]$.</p>
+            <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
+            <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
+            <ol>
+              <li>Find the second derivative $f''(x)$, which is <span class="secondDeriv"></span>.</li>
+              <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
+              <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{24n^2}$.</li>
+            </ol>
+            <p>The expression $\frac{K(b-a)^3}{24n^2}$ provides the guaranteed upper bound of the approximation's error; that is, the absolute error $|{E_M}|$ is at most $\frac{K(b-a)^3}{24n^2}$.</p>
+          </div>
+
+          <div class="error trapezoidalError">
+            <h3><b>Interpreting the Trapezoidal Rule error bound</b></h3>
+            <p>The error bound for the <b>Trapezoidal Rule</b> represents the maximum difference between the true integral and the trapezoidal rule approximation.</p>
+            <p>The formula for the error bound is the inequality $|{E_T}| \le \frac{K(b-a)^3}{12n^2}$, where $K$ is the maximum value of $|f''(x)|$ on the closed interval $[a, b]$.</p>
+            <p>Below are the steps followed to calculate the error bound, given $a =$ <span class="c aValue"></span>, $b = $ <span class="c bValue"></span>, and $n =$ <span class="c nValue"></span>.</p>
+            <p><i><b>Note:</b> A second derivative of $0$ may mean the derivative is unable to be computed.</i></p>
+            <ol>
+              <li>Find the second derivative $f''(x)$, which is <span class="secondDeriv"></span>.</li>
+              <li>Calculate $K$, which is $\max_{x\in[a,b]} |f''(x)|$.</li>
+              <li>Plug in the values $K$, $b$, $a$, and $n$ into the expression $\frac{K(b-a)^3}{12n^2}$.</li>
+            </ol>
+            <p>The expression $\frac{K(b-a)^3}{12n^2}$ provides the guaranteed upper bound of the approximation's error; that is, the absolute error $|{E_T}|$ is at most $\frac{K(b-a)^3}{12n^2}$.</p>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <div id="faq">
+        <div class="media-item-body">
+          <img id="question" width="28px" height="28px">
+          <h1>questions and information</h1>
+        </div>
+
+        <details class="section">
+          <summary><b>Graph and sum controls</b></summary>
+          <ul>
+            <li><b>Zoom:</b> Hover over the graph region on this page. Scroll up to zoom in and scroll down to zoom out.</li>
+            <li><b>Pan:</b> Hover over the graph region on this page. Hold down left click and drag a certain direction.</li>
+            <li><b>Reset:</b> Click on the "Reset Position" button found near the rest of the sum controls to return to (0, 0) with default scaling.</li>
+          </ul>
+        </details>
+
+        <details class="section">
+          <summary><b>Inputting values for intervals and f(x)</b></summary>
+          <ul>
+            <li>Many of the strings capable of being input can be found in the <b>Arithmetic functions</b> section at <a href="https://mathjs.org/docs/reference/functions.html">https://mathjs.org/docs/reference/functions.html</a>.</li>
+            <li>If $NaN$ is the result of any computation, there is at least one invalid input.</li>
+            <li>Functions that take in arguments must be written with opening and closing parentheses (e.g., sin(x) instead of sinx).</li>
+            <li>Implied multiplication is fairly inconsistent. A reccomendation is to either use the asterisk symbol (*) to represent multiplication or use a space (e.g., 3x * 2x or 3x 2x instead of 3x2x).</li>
+            <li>Some common functions you can input include sin(x), cos(x), x^2, abs(x), x^3, e^x, etc.</li>
+            <li>Inverse trigonometric functions, like $\arctan(x)$, are inputted as atan(x).</li>
+            <li>$\log_e(x)$ or $\ln(x)$ is inputted as the string log(x).</li>
+          </ul>
+        </details>
+
+        <details class="section">
+          <summary><b>Current limitations and restrictions</b></summary>
+          <ul>
+            <li>This visualizer currently will not work on mobile devices. The current canvas resolutions require a screen resolution of at least 1920x1080. Note that if your screen's resolution is smaller, you can zoom out to use the canvas (however, visuals may appear blurrier than normal).</li>
+            <li>Most functions with asymptotic, divergent, or jump behaviour are rendered awkwardly using p5.js shape construction (try inputting tan(x) or log10(x) for example). <i>Note that the sum computations for these "awkward" functions should remain accurate and correct</i>. Accurate visual representation of these functions often require complex workarounds and often handled case by case. While I may implement solutions in the future, feel free to recommend or test your own solutions by copying the open source GitHub repository at <a href="https://github.com/imthecon/numerical-integration-toolkit">https://github.com/imthecon/numerical-integration-toolkit</a>.</li>
+            <li>While an interval where $a > b$ (and vice versa) is considered valid, the $a$ and $b$ values listed in the "computations" section will always have $a = \min(a, b)$ and $b = \max(a, b)$.</li>
+            <li>Inputting incredibly large (or incredibly small) values for the interval may lead to computational error due to accumulated floating point calculations. It's best practice to keep interval values realistic, especially for visual purposes.</li>
+            <li>The trapezoid method only allows for subdivisions with equivalent $dx$ (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths.</li>
+            <li>Other numerical integration methods like Simpson's Rule might be added in the future. If you understand mathematics and JavaScript better than me, once again, feel free to add any of your own methods or features to a copy of the repository.</li>
+            <li>Any number that a computation deems small enough (e.g., 0.0001 to 3 decimal places = 0.000) may be rounded down to 0 despite not truly being exactly 0.</li>
+            <li>When computing the second derivative, variables (i.e., letters) other than $x$ are treated as constants and will still compute properly. However, the canvas will not render the function with variables other than $x$.</li>
+            <li>Sum computations will use either "$=$" or "$\approx$". A computation will use "$=$" if the rounded result is within a certain epsilon (currently 1e-12) value of the exact answer (or is the exact answer), otherwise the answer will be represented with "$\approx$".</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <footer>
+      <p>built with p5.js&ensp;•&ensp;© 2026 <b>sarder</b> - licensed under Apache 2.0</p>
+    </footer>
+  </body>
+</html>
