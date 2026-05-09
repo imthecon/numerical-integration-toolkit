@@ -11,12 +11,30 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
   position: relative;
 
   font-family: "DM Sans";
   font-size: 16px;
 }
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  /* courtesy of patterncraft.fun */
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(75, 85, 99, 0.08) 19px, rgba(75, 85, 99, 0.08) 20px, transparent 20px, transparent 39px, rgba(75, 85, 99, 0.08) 39px, rgba(75, 85, 99, 0.08) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(75, 85, 99, 0.08) 19px, rgba(75, 85, 99, 0.08) 20px, transparent 20px, transparent 39px, rgba(75, 85, 99, 0.08) 39px, rgba(75, 85, 99, 0.08) 40px),
+    radial-gradient(circle at 20px 20px, rgba(55, 65, 81, 0.12) 2px, transparent 2px),
+    radial-gradient(circle at 40px 40px, rgba(55, 65, 81, 0.12) 2px, transparent 2px)
+  ;
+
+  background-size: 40px 40px, 40px 40px, 40px 40px, 40px 40px;
+  opacity: 0.5;
+}
+
 
 body p, li, h3 {
   font-family: "Fira Code";
@@ -40,7 +58,7 @@ body p, li, h3 {
   flex: 1;
 
   height: 2px;
-  background: #e0e0e0;
+  background: #2a2a2a;
 }
 
 .media-item-body img {
@@ -49,6 +67,14 @@ body p, li, h3 {
   border-radius: 5px;
 
   transition: 0.25s ease;
+}
+
+.media-item-body .textImg1 {
+  padding: 6px;
+}
+
+.media-item-body .textImg2 {
+  padding: 8px;
 }
 
 .media-item-body img:hover {
@@ -504,7 +530,7 @@ input[type="checkbox"]:active {
   min-width: 0;
 }
 
-#computations {
+#computations, #errorsSection {
   text-align: left;
   padding: 10px 40px;
 }
@@ -622,7 +648,7 @@ input[type="checkbox"]:active {
 #faq {
   text-align: left;
   padding: 0 40px;
-  margin-bottom: 25px;
+  margin-bottom: 40px;
 }
 
 #faq ul {

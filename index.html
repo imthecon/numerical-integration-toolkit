@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/f(x).svg" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/sigma.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>numerical integration toolkit</title>
   </head>
@@ -26,7 +26,7 @@
 
       <div id="functionMapper">
         <div class="media-item-body">
-          <img src="/src/assets/sigma.svg" width="28px" height="28px">
+          <img class="textImg1" src="/src/assets/f(x).svg" width="24px" height="24px">
           <h1>function mapper</h1>
         </div>
         <div id="canvasContainer"></div>
@@ -68,6 +68,14 @@
         </div>
 
         <br>
+        </div>
+      </div> 
+
+       <div id="errorsSection">
+        <div class="media-item-body">
+          <img class="textImg2" src="/src/assets/italic-E.svg" width="20px" height="20px">
+          <h1>error bounds</h1>
+        </div>
 
         <div id="errors">
           <div class="error">
@@ -159,14 +167,15 @@
         </details>
 
         <details class="section">
-          <summary><b>How to input functions</b></summary>
+          <summary><b>Inputting values for intervals and f(x)</b></summary>
           <ul>
-            <li>Many of the functions capable of being input can be found in the "Arithmetic functions" section at <a href="https://mathjs.org/docs/reference/functions.html">https://mathjs.org/docs/reference/functions.html</a>.</li>
+            <li>Many of the strings capable of being input can be found in the <b>Arithmetic functions</b> section at <a href="https://mathjs.org/docs/reference/functions.html">https://mathjs.org/docs/reference/functions.html</a>.</li>
+            <li>If $NaN$ is the result of any computation, there is at least one invalid input.</li>
             <li>Functions that take in arguments must be written with opening and closing parentheses (e.g., sin(x) instead of sinx).</li>
             <li>Implied multiplication is fairly inconsistent. A reccomendation is to either use the asterisk symbol (*) to represent multiplication or use a space (e.g., 3x * 2x or 3x 2x instead of 3x2x).</li>
-            <li>Some common functions you can use include sin(x), cos(x), x^2, abs(x), x^3, e^x, etc.</li>
-            <li>Inverse trigonometric functions, like arctan(x), are inputted as atan(x).</li>
-            <li>While not currently available, LaTeX inputs may be supported in the future.</li>
+            <li>Some common functions you can input include sin(x), cos(x), x^2, abs(x), x^3, e^x, etc.</li>
+            <li>Inverse trigonometric functions, like $\arctan(x)$, are inputted as atan(x).</li>
+            <li>$\log_e(x)$ or $\ln(x)$ is inputted as the string log(x).</li>
           </ul>
         </details>
 
@@ -175,12 +184,11 @@
           <ul>
             <li>This visualizer currently will not work on mobile devices. The current canvas resolutions require a screen resolution of at least 1920x1080. Note that if your screen's resolution is smaller, you can zoom out to use the canvas (however, visuals may appear blurrier than normal).</li>
             <li>Most functions with asymptotic, divergent, or jump behaviour are rendered awkwardly using p5.js shape construction (try inputting tan(x) or log10(x) for example). <i>Note that the sum computations for these "awkward" functions should remain accurate and correct</i>. Accurate visual representation of these functions often require complex workarounds and often handled case by case. While I may implement solutions in the future, feel free to recommend or test your own solutions by copying the open source GitHub repository at <a href="https://github.com/imthecon">https://github.com/imthecon</a>.</li>
-            <li>While an input of a > b (and vice versa) is considered valid, the a and b values listed in the "computations" section will always have a = min(a, b) and b = max(a, b).</li>
-            <li>As of now, the trapezoid method only allows for subdivisions with equivalent dx (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths.</li>
-            <li>Trapezoids (in the Trapezoid method) will not highlight nor show their area upon hovering. Although, since trapezoids are not much more complex than rectangles, a solution will be implemented as soon as time permits.</li>
+            <li>While an input of $a > b$ (and vice versa) is considered valid, the $a$ and $b$ values listed in the "computations" section will always have $a = \min(a, b)$ and $b = \max(a, b)$.</li>
+            <li>The trapezoid method only allows for subdivisions with equivalent $dx$ (base lengths). This may differ from other variations of a trapezoidal sum where different sections may have different base lengths.</li>
             <li>Other numerical integration methods like Simpson's Rule might be added in the future. If you understand mathematics and JavaScript better than me, once again, feel free to add any of your own methods or features to a copy of the repository.</li>
             <li>Any number that a computation deems small enough (e.g., 0.0001 to 3 decimal places = 0.000) may be rounded down to 0 despite not truly being exactly 0.</li>
-            <li>When computing the second derivative, variables (i.e., letters) other than x are treated as constants and will still compute properly. However, the canvas will not render the function with variables other than x.</li>
+            <li>When computing the second derivative, variables (i.e., letters) other than $x$ are treated as constants and will still compute properly. However, the canvas will not render the function with variables other than $x$.</li>
             <li>Sum computations will use either "$=$" or "$\approx$". A computation will use "$=$" if the rounded result is within a certain epsilon (currently 1e-12) value of the exact answer (or is the exact answer), otherwise the answer will be represented with "$\approx$".</li>
           </ul>
         </details>

@@ -17,6 +17,15 @@ function parseFunction(str) {
   };
 }
 
+// math.js parser for aInput and bInput (interval inputs)
+function parseMathInput(value) {
+  try {
+    return math.evaluate(value);
+  } catch (e) {
+    return NaN;
+  }
+}
+
 // HTML LaTeX auto-renderer
 document.addEventListener("DOMContentLoaded", () => {
   renderMathInElement(document.body, {
@@ -128,7 +137,8 @@ const functionMapper = (p) => {
     window.addEventListener("resize", updateCanvasSize);
 
     canvas.parent(container);
-    canvas.elt.style.border = '1px dashed grey';
+    canvas.elt.style.border = '1px solid grey';
+    canvas.elt.style.borderRadius = '20px';
 
     centerX = p.width / 2;
     centerY = p.height / 2;
@@ -170,7 +180,7 @@ const functionMapper = (p) => {
     bLabel = p.createSpan("<i>b</i>:");
     bLabel.parent(intervalControls);
 
-    bInput = p.createInput(6.28);
+    bInput = p.createInput("6.28");
     bInput.parent(intervalControls);
 
     fnControls = p.createDiv();
@@ -293,8 +303,8 @@ const functionMapper = (p) => {
     let n = nSlider.value();
     nLabel.html(`Number of subdivisions (<i>n</i>): <b><span class="firaCode">${n}</span></b>`);
 
-    let a = parseFloat(aInput.value());
-    let b = parseFloat(bInput.value());
+    let a = parseMathInput(aInput.value());
+    let b = parseMathInput(bInput.value());
 
     areaRoundTo = areaRoundToSlider.value();
     areaRoundToLabel.html(`Round area to <b>${areaRoundTo}</b> decimal points`);
@@ -406,7 +416,7 @@ const functionMapper = (p) => {
     p.noFill();
 
     if (mode == "Light") {
-      p.stroke(0, 0, 255);
+      p.stroke(50, 100, 255);
     } else {
       p.stroke(255);
     }
@@ -504,10 +514,21 @@ const functionMapper = (p) => {
   }
 
   function clampIntervalInputs() {
-    let a = Number(aInput.value());
-    let b = Number(bInput.value());
+    let aStr = aInput.value().trim();
+    let bStr = bInput.value().trim();
 
-    if (Number.isNaN(a) || (Number.isNaN(b))) return;
+    if (aStr === "" || bStr === "") {
+      updateAll();
+      return;
+    }
+
+    let a = Number(aStr);
+    let b = Number(bStr);
+
+    if (Number.isNaN(a) || Number.isNaN(b)) {
+      updateAll();
+      return;
+    }
 
     a = Math.max(-10000, Math.min(a, 10000));
     b = Math.max(-10000, Math.min(b, 10000));
@@ -520,12 +541,17 @@ const functionMapper = (p) => {
 
   function showSectionArea(roundTo) {
     for (let s of subdivisions) {
-      if (p.mouseX >= s.x && p.mouseX <= s.x + s.w &&
-          p.mouseY >= s.y && p.mouseY <= s.y + s.h) {
-        
+      let hovering;
+
+      if (s.type == "rect") {
+        hovering = p.mouseX >= s.x && p.mouseX <= s.x + s.w && p.mouseY >= s.y && p.mouseY <= s.y + s.h;
+      } else if (s.type == "trapezoid") {
+        hovering = pointInQuad(p.mouseX, p.mouseY, s);
+      }
+
+      if (hovering) {  
         p.textFont("monospace");
         p.textSize(16);
-        p.fill(50)
         p.noStroke()
 
         if (mode == "Light") {
@@ -542,14 +568,46 @@ const functionMapper = (p) => {
           rounded = s.area.toFixed(roundTo);
         };
 
-        p.text("Area: " + rounded, s.x + 4, s.y - 8);
+        let tx = s.type == "rect" ? s.x + 4 : Math.min(s.x1, s.x2, s.x3, s.x4) + 4; // if rect ? top-left of rect : top left of trapezoid
+        let ty = s.type == "rect" ? s.y - 8 : Math.min(s.y1, s.y2, s.y3, s.y4) - 8; // if rect ? top-left of rect : top left of trapezoid
+
+        p.text("Area: " + rounded, tx, ty);
 
         p.stroke(255, 255, 0);
         p.fill(255, 255, 0, 50)
-        p.rect(s.x, s.y, s.w, s.h);
+
+        if (s.type == "rect") {
+          p.rect(s.x, s.y, s.w, s.h);
+        } else if (s.type == "trapezoid") {
+          p.quad(s.x1, s.y1, s.x2, s.y2, s.x3, s.y3, s.x4, s.y4);
+        }
       }
     }
   };
+
+  // for detecing hovers over trapezoids
+  function pointInQuad(px, py, q) {
+    return (
+      pointInTriangle(px, py, q.x1, q.y1, q.x2, q.y2, q.x3, q.y3) ||
+      pointInTriangle(px, py, q.x1, q.y1, q.x3, q.y3, q.x4, q.y4)
+    );
+  }
+
+  // pointInQuad helper function
+  function pointInTriangle(px, py, ax, ay, bx, by, cx, cy) {
+    let area =
+      0.5 * (-by * cx + ay * (-bx + cx) + ax * (by - cy) + bx * cy);
+
+    let s =
+      1 / (2 * area) *
+      (ay * cx - ax * cy + (cy - ay) * px + (ax - cx) * py);
+
+    let t =
+      1 / (2 * area) *
+      (ax * by - ay * bx + (ay - by) * px + (bx - ax) * py);
+
+    return s >= 0 && t >= 0 && (s + t) <= 1;
+  }
 
   function updateSums() {
     computeSum(sumRoundToSlider.value());
@@ -575,8 +633,8 @@ const functionMapper = (p) => {
   }
 
   function computeSum(roundTo) {
-    let a = parseFloat(aInput.value());
-    let b = parseFloat(bInput.value());
+    let a = parseMathInput(aInput.value());
+    let b = parseMathInput(bInput.value());
     let n = nSlider.value();
     let dx = (b - a)/n;
 
@@ -646,8 +704,8 @@ const functionMapper = (p) => {
   };
 
   function returnValues() {
-    let a = parseFloat(aInput.value());
-    let b = parseFloat(bInput.value());
+    let a = parseMathInput(aInput.value());
+    let b = parseMathInput(bInput.value());
     let n = nSlider.value();
     
     document.querySelectorAll(".aValue").forEach(el => {
@@ -669,7 +727,17 @@ const functionMapper = (p) => {
     f1 = math.derivative(fParsed, "x");
     f2 = math.derivative(f1, "x");
 
-    f2String = f2.toString();
+    f2String = f2String = f2.toString()
+      .replaceAll("sin", "\\sin")
+      .replaceAll("cos", "\\cos")
+      .replaceAll("tan", "\\tan")
+      .replaceAll("csc", "\\csc")
+      .replaceAll("sec", "\\sec")
+      .replaceAll("cot", "\\cot")
+      .replaceAll("log", "\\log")
+      .replaceAll("ln", "\\ln")
+      .replaceAll("sqrt", "\\sqrt")
+      .replaceAll("*", "");
 
     document.querySelectorAll(".secondDeriv").forEach(el => {
       let latexOutput = katex.renderToString(`${f2String}`, {
@@ -681,8 +749,8 @@ const functionMapper = (p) => {
   };
 
   function calculatef2Extrema() {
-    let a = parseFloat(aInput.value());
-    let b = parseFloat(bInput.value());
+    let a = parseMathInput(aInput.value());
+    let b = parseMathInput(bInput.value());
     let n = nSlider.value();
 
     let f3 = math.derivative(f2, "x");
@@ -724,8 +792,8 @@ const functionMapper = (p) => {
 
   // this function should be changed to a .forEach() output system if more errors need to be calculated
   function calculatef2Error() {
-    let a = parseFloat(aInput.value());
-    let b = parseFloat(bInput.value());
+    let a = parseMathInput(aInput.value());
+    let b = parseMathInput(bInput.value());
     let n = nSlider.value();
 
     let critPoints = calculatef2Extrema();
@@ -802,6 +870,7 @@ const functionMapper = (p) => {
       );
 
       subdivisions.push({
+        type: "rect",
         x: px,
         y: h > 0 ? py - h : py,
         w: dx * scaling,
@@ -848,6 +917,7 @@ const functionMapper = (p) => {
       );
 
       subdivisions.push({
+        type: "rect",
         x: px,
         y: h > 0 ? py - h : py,
         w: dx * scaling,
@@ -898,6 +968,7 @@ const functionMapper = (p) => {
       let h = fx * scaling;
 
       subdivisions.push({
+        type: "rect",
         x: px,
         y: fx > 0 ? py - h : py,
         w: dx * scaling,
@@ -946,6 +1017,19 @@ const functionMapper = (p) => {
         px2, py2,
         px1, py1
       );
+
+      subdivisions.push({
+        type: "trapezoid",
+        x1: px1,
+        y1: py1,
+        x2: px2,
+        y2: py2,
+        x3: px2,
+        y3: baseY,
+        x4: px1,
+        y4: baseY,
+        area: ((y1 + y2) / 2) * dx,
+      });
     }
   }
 
