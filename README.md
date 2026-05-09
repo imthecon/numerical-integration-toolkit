@@ -20,7 +20,7 @@ An interactive numerical integral visualizer with precise and accurate computati
 - **A questions and information section:** read important snippets explaining how to use the function mapper, how to enter values, and current limitations + future updates.
 
 ## How to create your own copy of this repository:
-1. Download and nstall Node.js from the Node.js official website.
+1. Download and install Node.js from the Node.js official website.
 2. Create a file in a code editor (e.g., VS Code) and run `git clone https://github.com/imthecon/numerical-integration-toolkit` in a terminal.
 3. Run `cd numerical-integration-toolkit` to enter the folder of the project.
 4. Install all required dependencies by running `npm install`.
