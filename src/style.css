@@ -658,6 +658,10 @@ input[type="checkbox"]:active {
   margin: 0;
 }
 
+.errorBox .varData {
+  font-size: 12px;
+}
+
 .errorValue {
   flex: 1;
   width: 100%;
