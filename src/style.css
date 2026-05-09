@@ -203,7 +203,7 @@ details summary::before {
   width: 16px;
   height: 16px;
 
-  background-image: url("assets/chevron-down.svg");
+  background-image: url("/public/assets/chevron-down.svg");
   background-size: contain;
   background-repeat: no-repeat;
 
@@ -239,7 +239,7 @@ select {
   -moz-appearance: none;
   cursor: pointer;
 
-  background-image: url("./assets/chevron-down.svg");
+  background-image: url("/public/assets/chevron-up.svg");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 16px;

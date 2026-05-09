@@ -3,6 +3,17 @@ import p5 from "p5";
 import { create, all, fix } from "mathjs";
 import katex from "katex";
 import renderMathInElement from "katex/contrib/auto-render";
+import { icons } from './assets/assets.js'
+
+// assets
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('#github').src = icons.github
+  document.querySelector('#home').src = icons.home
+  document.querySelector('#fx').src = icons.fx
+  document.querySelector('#italicE').src = icons.italicE
+  document.querySelector('#mathSigns').src = icons.mathSigns
+  document.querySelector('#question').src = icons.question
+})
 
 const math = create(all);
 
