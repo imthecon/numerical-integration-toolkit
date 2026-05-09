@@ -3,7 +3,7 @@
 An interactive numerical integral visualizer with precise and accurate computations including error bounds.
 
 ## Official link
-...
+https://imthecon.github.io/numerical-integration-toolkit
 
 ## Current features
 - **A function mapper:** type in a function as a string (according to math.js formatting) to graph it.
